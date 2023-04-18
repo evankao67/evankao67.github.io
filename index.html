@@ -5,7 +5,73 @@
 	<title>YouTube Spider</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="style.css">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+		}
+		
+		.search-container {
+			background-color: #f2f2f2;
+			padding: 20px;
+			text-align: center;
+		}
+		
+		.search-container h1 {
+			margin: 0;
+		}
+		
+		.search-container form {
+			margin-top: 20px;
+		}
+		
+		.search-container input[type=text] {
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			width: 60%;
+			margin-right: 10px;
+		}
+		
+		.search-container button[type=submit] {
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		
+		.results-container {
+			background-color: #ECECEC; /*綠色*/
+			color: black; /*文字顏色*/
+			font-weight: bold;
+			padding: 20px; /*內距*/
+			margin: 20px 0; /*外距*/
+		}
+		
+		.results-container h2 {
+			margin: 0;
+		}
+		
+		.results-container ul {
+			list-style: none;
+			padding: 0;
+		}
+		
+		.results-container li {
+			margin-bottom: 10px;
+		}
+		
+		.results-container li a {
+			color: #000;
+			text-decoration: none;
+		}
+		
+		.results-container li a:hover {
+			text-decoration: underline;
+		}
+	</style>
 </head>
 
 <body>
@@ -19,7 +85,65 @@
 		<pre id="result"></pre>
 		<div id="comment-section"></div>
 	</div>
-	<script src="app.js"></script>
+	<script>
+		const YOUTUBE_API_KEY = 'AIzaSyAYWLesu734_hT9VZMZw4hbXKNZzrowq3I';
+const commentSection = document.getElementById('result');
+const urlInput = document.getElementById('url-input');
+const countDiv = document.createElement('div'); 
+countDiv.style.fontWeight = 'bold';
+countDiv.style.fontSize = '20px';
+
+function fetchComments() {
+    const videoId = getVideoId(urlInput.value);
+    if (videoId) {
+        getComments(videoId, '');
+    }
+}
+
+function getVideoId(url) {
+    const pattern = /^(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)(?:\S+)?$/;
+    const match = url.match(pattern);
+    if (match) {
+        return match[1];
+    } else {
+        alert('Invalid YouTube URL.');
+        return null;
+    }
+}
+
+function getComments(videoId, nextPageToken) {
+    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${YOUTUBE_API_KEY}&pageToken=${nextPageToken}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const comments = data.items.map(item => item.snippet.topLevelComment.snippet.textDisplay);
+            appendComments(comments);
+            const nextPage = data.nextPageToken;
+            if (nextPage) {
+                getComments(videoId, nextPage);
+            }
+        })
+        .catch(error => console.error(error));
+}
+
+
+
+function appendComments(comments) {
+    for (let comment of comments) {
+        const commentElement = document.createElement('p');
+        commentElement.innerText = comment;
+        commentSection.appendChild(commentElement);
+    }
+    countDiv.innerText = `總共 ${comments.length} 則留言：`;
+    commentSection.insertBefore(countDiv, commentSection.firstChild);
+}
+
+
+
+
+
+
+	</script>
 </body>
 
 </html>
