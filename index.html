@@ -87,62 +87,88 @@
 	</div>
 	<script>
 		const YOUTUBE_API_KEY = 'AIzaSyAYWLesu734_hT9VZMZw4hbXKNZzrowq3I';
-const commentSection = document.getElementById('result');
-const urlInput = document.getElementById('url-input');
-const countDiv = document.createElement('div'); 
-countDiv.style.fontWeight = 'bold';
-countDiv.style.fontSize = '20px';
+		const commentSection = document.getElementById('comment-section');
+		const urlInput = document.getElementById('url-input');
+		const copyButton = document.createElement('button');
+		copyButton.textContent = '複製留言';
+		copyButton.addEventListener('click', copyComments);
+		commentSection.appendChild(copyButton);
 
-function fetchComments() {
-    const videoId = getVideoId(urlInput.value);
-    if (videoId) {
-        getComments(videoId, '');
-    }
-}
+		function fetchComments() {
+			const videoId = getVideoId(urlInput.value);
+			if (videoId) {
+				getComments(videoId, '');
+			}
+		}
 
-function getVideoId(url) {
-    const pattern = /^(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)(?:\S+)?$/;
-    const match = url.match(pattern);
-    if (match) {
-        return match[1];
-    } else {
-        alert('Invalid YouTube URL.');
-        return null;
-    }
-}
+		function getVideoId(url) {
+			const pattern = /^(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)(?:\S+)?$/;
+			const match = url.match(pattern);
+			if (match) {
+				return match[1];
+			} else {
+				alert('Invalid YouTube URL.');
+				return null;
+			}
+		}
 
-function getComments(videoId, nextPageToken) {
-    const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${YOUTUBE_API_KEY}&pageToken=${nextPageToken}`;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const comments = data.items.map(item => item.snippet.topLevelComment.snippet.textDisplay);
-            appendComments(comments);
-            const nextPage = data.nextPageToken;
-            if (nextPage) {
-                getComments(videoId, nextPage);
-            }
-        })
-        .catch(error => console.error(error));
-}
+		function getComments(videoId, nextPageToken) {
+			const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=replies,snippet&videoId=${videoId}&maxResults=100&key=${YOUTUBE_API_KEY}&pageToken=${nextPageToken}`;
+			fetch(url)
+				.then(response => response.json())
+				.then(data => {
+					const comments = data.items.map(item => {
+						const comment = item.snippet.topLevelComment.snippet.textDisplay;
+						const author = item.snippet.topLevelComment.snippet.authorDisplayName;
+						const replies = item.replies ? item.replies.comments.map(reply => {
+							const replyText = reply.snippet.textDisplay;
+							const replyAuthor = reply.snippet.authorDisplayName;
+							return {
+								text: replyText,
+								author: replyAuthor
+							};
+						}) : [];
+						return {
+							text: comment,
+							author: author,
+							replies: replies
+						};
+					});
+					appendComments(comments);
+					const nextPage = data.nextPageToken;
+					if (nextPage) {
+						getComments(videoId, nextPage);
+					}
+				})
+				.catch(error => console.error(error));
+		}
 
+		function appendComments(comments) {
+			for (let comment of comments) {
+				const commentElement = document.createElement('p');
+				commentElement.innerHTML = `<strong>${comment.author}</strong>: ${comment.text}`;
+				commentSection.appendChild(commentElement);
 
+				for (let reply of comment.replies) {
+					const replyElement = document.createElement('p');
+					replyElement.innerHTML = `<em>${reply.author}</em>: ${reply.text}`;
+					replyElement.style.marginLeft = '20px'; // Add indentation for replies
+					commentSection.appendChild(replyElement);
+				}
+			}
+		}
 
-function appendComments(comments) {
-    for (let comment of comments) {
-        const commentElement = document.createElement('p');
-        commentElement.innerText = comment;
-        commentSection.appendChild(commentElement);
-    }
-    countDiv.innerText = `總共 ${comments.length} 則留言：`;
-    commentSection.insertBefore(countDiv, commentSection.firstChild);
-}
-
-
-
-
-
-
+		function copyComments() {
+			const commentTexts = Array.from(commentSection.getElementsByTagName('p')).map(element => element.textContent.split(": ")[1]);
+			const copiedText = commentTexts.join('\n');
+			navigator.clipboard.writeText(copiedText)
+				.then(() => {
+					alert('留言已複製！');
+				})
+				.catch(error => {
+					console.error('複製留言時發生錯誤：', error);
+				});
+		}
 	</script>
 </body>
 
