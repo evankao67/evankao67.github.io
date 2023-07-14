@@ -2,174 +2,317 @@
 <html>
 
 <head>
-	<title>YouTube Spider</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-		}
-		
-		.search-container {
-			background-color: #f2f2f2;
-			padding: 20px;
-			text-align: center;
-		}
-		
-		.search-container h1 {
-			margin: 0;
-		}
-		
-		.search-container form {
-			margin-top: 20px;
-		}
-		
-		.search-container input[type=text] {
-			padding: 10px;
-			border: none;
-			border-radius: 5px;
-			width: 60%;
-			margin-right: 10px;
-		}
-		
-		.search-container button[type=submit] {
-			background-color: #4CAF50;
-			color: #fff;
-			padding: 10px;
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-		}
-		
-		.results-container {
-			background-color: #ECECEC; /*綠色*/
-			color: black; /*文字顏色*/
-			font-weight: bold;
-			padding: 20px; /*內距*/
-			margin: 20px 0; /*外距*/
-		}
-		
-		.results-container h2 {
-			margin: 0;
-		}
-		
-		.results-container ul {
-			list-style: none;
-			padding: 0;
-		}
-		
-		.results-container li {
-			margin-bottom: 10px;
-		}
-		
-		.results-container li a {
-			color: #000;
-			text-decoration: none;
-		}
-		
-		.results-container li a:hover {
-			text-decoration: underline;
-		}
-	</style>
+    <title>YouTube Spider</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: white;
+          }
+          
+          .search-container {
+            background-color: red;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          
+          .search-container h1 {
+            margin: 0;
+            color: white;
+          }
+          
+          .search-container input[type="text"] {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            width: 60%;
+            margin-right: 10px;
+          }
+          
+          .search-container button[type="submit"] {
+            background-color: black;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+          }
+          
+          .results-container {
+            background-color: #ffffff;
+            color: #000000;
+            font-weight: bold;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          
+          .results-container h2 {
+            margin: 0;
+            color: #ff0000;
+          }
+          
+          .results-container table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          
+          .results-container th,
+          .results-container td {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+          }
+          
+          .results-container th {
+            background-color: black;
+            color: #ffffff;
+          }
+          
+          .results-container td:nth-child(1),
+          .results-container td:nth-child(2) {
+            font-weight: bold;
+          }
+          
+          .results-container td:nth-child(3) {
+            font-style: italic;
+          }
+          
+          .results-container td:nth-child(4) {
+            width: 20%;
+          }
+          
+          button {
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+          }
+          
+          button:hover {
+            background-color: #cc0000;
+          }
+
+          button.copy-button {
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+          }
+          
+          button.export-button {
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+          }
+          
+          
+          
+    </style>
 </head>
 
 <body>
-	<div class="search-container">
-		<h1>YouTube 留言搜集器</h1>
-		<input type="text" id="url-input" placeholder="請輸入Youtube影片網址，即可幫您搜尋留言">
-		<button type="submit" onclick="fetchComments()">搜尋</button>
-	</div>
-	<h2 style="color: #333; font-size: 24px; font-weight: bold; text-align: left;">搜尋結果</h2>
-	<div class="results-container">
-		<pre id="result"></pre>
-		<div id="comment-section"></div>
-	</div>
-	<script>
-		const YOUTUBE_API_KEY = 'AIzaSyAYWLesu734_hT9VZMZw4hbXKNZzrowq3I';
-		const commentSection = document.getElementById('comment-section');
-		const urlInput = document.getElementById('url-input');
-		const copyButton = document.createElement('button');
-		copyButton.textContent = '複製留言';
-		copyButton.addEventListener('click', copyComments);
-		commentSection.appendChild(copyButton);
+    <div class="search-container">
+        <h1>YouTube 留言搜尋器</h1>
+        <input type="text" id="url-input" placeholder="請輸入Youtube影片網址，即可幫您搜尋留言">
+        <button type="submit" onclick="fetchComments()">搜尋</button>
+    </div>
+    <h2 style="color: black; font-size: 24px; font-weight: bold; text-align: left; margin-left: 20px;">搜尋結果</h2>
+    <div class="results-container">
+        <button onclick="copyComments()">複製留言</button>
+        <span id="comment-count" class="comment-count"></span>
+        <span id="word-count" class="word-count"></span>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left;">留言者</th>
+                    <th style="text-align: left;">留言內容</th>
+                    <th style="text-align: left;">回覆對象</th>
+                    <th style="text-align: left;">時間戳記</th>
+                </tr>
+            </thead>
+            <tbody id="comment-section"></tbody>
+        </table>
+    </div>
+    <script>
+        const YOUTUBE_API_KEY = 'AIzaSyAYWLesu734_hT9VZMZw4hbXKNZzrowq3I';
+        const commentSection = document.getElementById('comment-section');
+        const urlInput = document.getElementById('url-input');
+        const copyButton = document.querySelector('.copy-button');
+        const commentCount = document.getElementById('comment-count');
+        const wordCount = document.getElementById('word-count');
+        let totalComments = 0;
+        let totalWords = 0;
 
-		function fetchComments() {
-			const videoId = getVideoId(urlInput.value);
-			if (videoId) {
-				getComments(videoId, '');
-			}
-		}
+        function fetchComments() {
+            const videoId = getVideoId(urlInput.value);
+            if (videoId) {
+                getComments(videoId, '');
+            }
+            appendExportButton();
+        }
 
-		function getVideoId(url) {
-			const pattern = /^(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)(?:\S+)?$/;
-			const match = url.match(pattern);
-			if (match) {
-				return match[1];
-			} else {
-				alert('Invalid YouTube URL.');
-				return null;
-			}
-		}
+        function appendExportButton() {
+            const exportButton = document.createElement('button');
+            exportButton.textContent = '一鍵匯出成 CSV 檔案';
+            exportButton.addEventListener('click', exportToCSV);
+            const resultsContainer = document.querySelector('.results-container');
+            resultsContainer.insertBefore(exportButton, resultsContainer.firstChild);
+        }
 
-		function getComments(videoId, nextPageToken) {
-			const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=replies,snippet&videoId=${videoId}&maxResults=100&key=${YOUTUBE_API_KEY}&pageToken=${nextPageToken}`;
-			fetch(url)
-				.then(response => response.json())
-				.then(data => {
-					const comments = data.items.map(item => {
-						const comment = item.snippet.topLevelComment.snippet.textDisplay;
-						const author = item.snippet.topLevelComment.snippet.authorDisplayName;
-						const replies = item.replies ? item.replies.comments.map(reply => {
-							const replyText = reply.snippet.textDisplay;
-							const replyAuthor = reply.snippet.authorDisplayName;
-							return {
-								text: replyText,
-								author: replyAuthor
-							};
-						}) : [];
-						return {
-							text: comment,
-							author: author,
-							replies: replies
-						};
-					});
-					appendComments(comments);
-					const nextPage = data.nextPageToken;
-					if (nextPage) {
-						getComments(videoId, nextPage);
-					}
-				})
-				.catch(error => console.error(error));
-		}
+        function getVideoId(url) {
+            const pattern = /^(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-]+)(?:\S+)?$/;
+            const match = url.match(pattern);
+            if (match) {
+                return match[1];
+            } else {
+                alert('Invalid YouTube URL.');
+                return null;
+            }
+        }
 
-		function appendComments(comments) {
-			for (let comment of comments) {
-				const commentElement = document.createElement('p');
-				commentElement.innerHTML = `<strong>${comment.author}</strong>: ${comment.text}`;
-				commentSection.appendChild(commentElement);
+        function getComments(videoId, nextPageToken) {
+            const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=replies,snippet&videoId=${videoId}&maxResults=100&key=${YOUTUBE_API_KEY}&pageToken=${nextPageToken}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const comments = data.items.map(item => {
+                        const comment = item.snippet.topLevelComment.snippet.textDisplay;
+                        const author = item.snippet.topLevelComment.snippet.authorDisplayName;
+                        const replyTo = item.snippet.topLevelComment.snippet.parentId ? item.snippet.topLevelComment.snippet.parentId : 'N/A';
+                        const timestamp = item.snippet.topLevelComment.snippet.publishedAt;
+                        const replies = item.replies ? item.replies.comments.map(reply => {
+                            const replyText = reply.snippet.textDisplay;
+                            const replyAuthor = reply.snippet.authorDisplayName;
+                            return {
+                                text: replyText,
+                                author: replyAuthor,
+                                replyTo: author,
+                                timestamp: reply.snippet.publishedAt
+                            };
+                        }) : [];
+                        return {
+                            text: comment,
+                            author: author,
+                            replyTo: replyTo,
+                            timestamp: timestamp,
+                            replies: replies
+                        };
+                    });
+                    appendComments(comments);
+                    const nextPage = data.nextPageToken;
+                    if (nextPage) {
+                        getComments(videoId, nextPage);
+                    } else {
+                        updateCommentCount(totalComments);
+                        updateWordCount(totalWords);
+                    }
+                })
+                .catch(error => console.error(error));
+        }
 
-				for (let reply of comment.replies) {
-					const replyElement = document.createElement('p');
-					replyElement.innerHTML = `<em>${reply.author}</em>: ${reply.text}`;
-					replyElement.style.marginLeft = '20px'; // Add indentation for replies
-					commentSection.appendChild(replyElement);
-				}
-			}
-		}
+        function appendComments(comments) {
+            for (let comment of comments) {
+                const commentRow = document.createElement('tr');
+                const authorCell = document.createElement('td');
+                const textCell = document.createElement('td');
+                const replyToCell = document.createElement('td');
+                const timestampCell = document.createElement('td');
 
-		function copyComments() {
-			const commentTexts = Array.from(commentSection.getElementsByTagName('p')).map(element => element.textContent.split(": ")[1]);
-			const copiedText = commentTexts.join('\n');
-			navigator.clipboard.writeText(copiedText)
-				.then(() => {
-					alert('留言已複製！');
-				})
-				.catch(error => {
-					console.error('複製留言時發生錯誤：', error);
-				});
-		}
-	</script>
+                authorCell.textContent = comment.author;
+                textCell.textContent = comment.text;
+                replyToCell.textContent = comment.replyTo;
+                timestampCell.textContent = comment.timestamp;
+
+                commentRow.appendChild(authorCell);
+                commentRow.appendChild(textCell);
+                commentRow.appendChild(replyToCell);
+                commentRow.appendChild(timestampCell);
+
+                commentSection.appendChild(commentRow);
+
+                totalComments++;
+                totalWords += countWords(comment.text);
+                for (let reply of comment.replies) {
+                    const replyRow = document.createElement('tr');
+                    const replyAuthorCell = document.createElement('td');
+                    const replyTextCell = document.createElement('td');
+                    const replyReplyToCell = document.createElement('td');
+                    const replyTimestampCell = document.createElement('td');
+
+                    replyAuthorCell.textContent = reply.author;
+                    replyTextCell.textContent = reply.text;
+                    replyReplyToCell.textContent = reply.replyTo;
+                    replyTimestampCell.textContent = reply.timestamp;
+
+                    replyAuthorCell.style.fontStyle = 'italic';
+                    replyRow.style.marginLeft = '20px';
+
+                    replyRow.appendChild(replyAuthorCell);
+                    replyRow.appendChild(replyTextCell);
+                    replyRow.appendChild(replyReplyToCell);
+                    replyRow.appendChild(replyTimestampCell);
+
+                    commentSection.appendChild(replyRow);
+
+                    totalComments++;
+                    totalWords += countWords(reply.text);
+                }
+            }
+        }
+
+        function copyComments() {
+            const commentRows = Array.from(commentSection.getElementsByTagName('tr'));
+            const commentTexts = commentRows.map(row => Array.from(row.getElementsByTagName('td')).map(cell => cell.textContent));
+            const copiedText = commentTexts.map(comment => comment.slice(1, 2)).join('\n');
+            navigator.clipboard.writeText(copiedText)
+                .then(() => {
+                    alert('留言已複製！');
+                })
+                .catch(error => {
+                    console.error('複製留言時發生錯誤：', error);
+                });
+        }
+
+
+        function countWords(text) {
+            return text.trim().length;
+        }
+
+        function updateCommentCount(count) {
+            commentCount.textContent = `總留言數量：${count}`;
+        }
+
+        function updateWordCount(count) {
+            wordCount.textContent = `總留言字數：${count}`;
+        }
+
+        function exportToCSV() {
+            const commentRows = Array.from(commentSection.getElementsByTagName('tr'));
+            const csvContent = commentRows.map(row => {
+                const rowData = Array.from(row.getElementsByTagName('td')).map(cell => cell.textContent.replaceAll(',', '，').trim());
+                return rowData.join(',');
+            }).join('\n');
+            const csvData = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', csvData);
+            linkElement.setAttribute('download', 'YouTube影片留言.csv');
+            linkElement.click();
+        }
+    </script>
 </body>
 
 </html>
